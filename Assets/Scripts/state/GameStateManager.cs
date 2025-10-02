@@ -166,7 +166,7 @@ namespace state
         #region Convenience / Query helpers
 
         // Category booleans (use marker interfaces or concrete types)
-        public bool IsPaused => CurrentState.GameState == GameState.Paused;
+        public bool IsPaused => (CurrentState.GameState == GameState.Paused) ||  (CurrentState.GameState == GameState.Options);
         public bool IsPlaying => CurrentState.GameState == GameState.Playing;
         public bool IsMenu => CurrentState.GameState == GameState.Menu;
         public bool IsOptions => CurrentState.GameState == GameState.Options;

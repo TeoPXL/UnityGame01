@@ -109,10 +109,6 @@ namespace state
             Debug.Log($"Playing - Round {round}");
         }
 
-        public override void Tick()
-        {
-        }
-
         public override void Exit()
         {
             GameStateManager.Instance.DestroyUI(playingUIInstance);
@@ -121,7 +117,7 @@ namespace state
             scoreUIInstance = null;
         }
 
-        public void Tick(float deltaTime)
+        public override void Tick()
         {
             if (InputUtils.WasPausePressedThisFrame())
             {
@@ -190,6 +186,10 @@ namespace state
 
         public override void Tick()
         {
+            if (InputUtils.WasPausePressedThisFrame())
+            {
+                Resume();
+            }
         }
 
         public override void Exit()
@@ -208,14 +208,6 @@ namespace state
         public void ShowUI()
         {
             instance?.gameObject.SetActive(true);
-        }
-
-        public void Tick(float deltaTime)
-        {
-            if (InputUtils.WasPausePressedThisFrame())
-            {
-                Resume();
-            }
         }
 
         private void Resume()
