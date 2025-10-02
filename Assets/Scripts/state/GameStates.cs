@@ -52,7 +52,12 @@ namespace state
 
         private void HandleStart()
         {
-            GameStateManager.Instance.ChangeState(new PlayingState(GameStateManager.Instance.playingUIPrefab));
+            GameStateManager.Instance.ChangeState(
+                new PlayingState(
+                    GameStateManager.Instance.playingUIPrefab,
+                    GameStateManager.Instance.scoreUIPrefab
+                )
+            );
         }
 
         private void HandleOptions()
@@ -72,8 +77,10 @@ namespace state
 
     public class PlayingState : State
     {
-        private PlayingUI prefab;
-        private PlayingUI instance;
+        private PlayingUI playingUIPrefab;
+        private ScoreUI scoreUIPrefab;
+        private PlayingUI playingUIInstance;
+        private ScoreUI scoreUIInstance;
         public override GameState GameState => GameState.Playing;
 
         private int round = 1;
@@ -81,16 +88,19 @@ namespace state
         private int currentAmmo;
         private AmmoCounterUI ammoUI;
 
-        public PlayingState(PlayingUI prefab)
+        public PlayingState(PlayingUI playingUIPrefab, ScoreUI scoreUIPrefab)
         {
-            this.prefab = prefab;
+            this.playingUIPrefab = playingUIPrefab;
+            this.scoreUIPrefab = scoreUIPrefab;
         }
 
         public override void Enter()
         {
-            instance = GameStateManager.Instance.SpawnUI(prefab);
+            playingUIInstance = GameStateManager.Instance.SpawnUI(playingUIPrefab);
+            scoreUIInstance = GameStateManager.Instance.SpawnUI(scoreUIPrefab);
+            // We should then use scoreUIInstance to modify actual score values
 
-            ammoUI = instance.GetComponentInChildren<AmmoCounterUI>();
+            ammoUI = playingUIInstance.GetComponentInChildren<AmmoCounterUI>();
             NozzleController nozzle = Object.FindFirstObjectByType<NozzleController>();
             maxAmmo = nozzle != null ? nozzle.maxAmmo : 6;
             currentAmmo = maxAmmo;
@@ -105,8 +115,10 @@ namespace state
 
         public override void Exit()
         {
-            GameStateManager.Instance.DestroyUI(instance);
-            instance = null;
+            GameStateManager.Instance.DestroyUI(playingUIInstance);
+            GameStateManager.Instance.DestroyUI(scoreUIInstance);
+            playingUIInstance = null;
+            scoreUIInstance = null;
         }
 
         public void Tick(float deltaTime)
