@@ -13,19 +13,21 @@ public class BulletController : MonoBehaviour
     void Update()
     {
         // Move up relative to the bullet's local orientation
-        transform.Translate(Vector3.up * speed * Time.deltaTime, Space.Self);
+        transform.Translate(Vector3.up * (speed * Time.deltaTime), Space.Self);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<BulletController>() != null){
+        if (collision.gameObject.GetComponent<BulletController>() != null)
+        {
             return;
         }
+
         // Check if the object we hit has an EnemyController
         EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
         if (enemy != null)
         {
-            if (enemy.enemyType == EnemyController.Type.SPORADIC)
+            if (enemy.enemyType == EnemyController.Type.Sporadic)
             {
                 // Find nearest other enemy to ricochet toward
                 EnemyController nearest = FindNearestEnemy(enemy);
@@ -75,5 +77,4 @@ public class BulletController : MonoBehaviour
 
         return nearest;
     }
-
 }

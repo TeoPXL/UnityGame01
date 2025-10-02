@@ -1,33 +1,37 @@
 using UnityEngine;
 
-public class HealthBar : MonoBehaviour
+namespace UI
 {
-    private Transform target;
-    private float initialScaleX;
-
-    public void Initialize(Transform enemy)
+    public class HealthBar : MonoBehaviour
     {
-        target = enemy;
-        initialScaleX = transform.localScale.x; // save original width
-    }
+        private Transform target;
+        private float initialScaleX;
 
-    void Update()
-    {
-        if (target != null)
+        public void Initialize(Transform enemy)
         {
-            // Make the health bar follow the enemy
-            transform.position = target.position + new Vector3(0, 1.2f, 0);
+            target = enemy;
+            initialScaleX = transform.localScale.x; // save original width
         }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
-    // healthNormalized = currentHealth / maxHealth
-    public void SetHealth(float healthNormalized)
-    {
-        healthNormalized = Mathf.Clamp01(healthNormalized);
-        transform.localScale = new Vector3(initialScaleX * healthNormalized, transform.localScale.y, transform.localScale.z);
+        void Update()
+        {
+            if (target != null)
+            {
+                // Make the health bar follow the enemy
+                transform.position = target.position + new Vector3(0, 1.2f, 0);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        // healthNormalized = currentHealth / maxHealth
+        public void SetHealth(float healthNormalized)
+        {
+            healthNormalized = Mathf.Clamp01(healthNormalized);
+            transform.localScale = new Vector3(initialScaleX * healthNormalized, transform.localScale.y,
+                transform.localScale.z);
+        }
     }
 }

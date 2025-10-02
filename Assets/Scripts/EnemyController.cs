@@ -1,25 +1,25 @@
+using state;
+using UI;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    [HideInInspector]
-    public EnemySpawnController spawnController; // assigned on spawn
+    [HideInInspector] public EnemySpawnController spawnController; // assigned on spawn
 
     public enum Type
     {
-        TANK,
-        SPEEDY,
-        SPORADIC
+        Tank,
+        Speedy,
+        Sporadic
     }
 
-    public Type enemyType = Type.TANK;
+    public Type enemyType = Type.Tank;
     public Transform targetPoint; // Point enemies are biased towards
 
     // Audio clips
     public AudioClip hitPlanetSound;
     public AudioClip hitByBulletSound;
     public AudioClip powerupSound;
-    public float volume = 1.5f;
 
     private Vector3 currentDirection;
     private Vector3 targetDirection;
@@ -33,13 +33,12 @@ public class EnemyController : MonoBehaviour
     private SpriteRenderer sr; // For coloring
 
     // For rainbow effect
-    private float rainbowHue = 0f;
+    private float rainbowHue;
 
     // HEALTH SYSTEM
     private int maxHealth;
     private int currentHealth;
 
-    public GameObject healthBarPrefab;
     private HealthBar healthBar;
 
     void Start()
@@ -50,26 +49,26 @@ public class EnemyController : MonoBehaviour
             Debug.LogError("Enemy prefab has no child with a SpriteRenderer!");
         }
 
-        float difficulty = GameStateManager.Instance.settings.difficulty;
+        float difficulty = GameStateManager.Instance.settings.Difficulty;
 
         // Set movement stats and color
         switch (enemyType)
         {
-            case Type.TANK:
+            case Type.Tank:
                 speed = 2f * difficulty;
                 biasStrength = 0.6f * difficulty;
                 randomnessStrength = 0.5f * difficulty;
                 transform.localScale = Vector3.one * 1.1f;
                 sr.color = Color.red;
                 break;
-            case Type.SPEEDY:
+            case Type.Speedy:
                 speed = 5f * difficulty;
                 biasStrength = 1.2f * difficulty;
                 randomnessStrength = 0.6f * difficulty;
                 transform.localScale = Vector3.one * 0.9f;
                 sr.color = Color.white;
                 break;
-            case Type.SPORADIC:
+            case Type.Sporadic:
                 speed = 7f * difficulty;
                 biasStrength = 0.01f * difficulty;
                 randomnessStrength = 3.5f * difficulty;
@@ -91,18 +90,19 @@ public class EnemyController : MonoBehaviour
     {
         switch (type)
         {
-            case Type.TANK:
+            case Type.Tank:
                 if (difficulty < 1f) return 2;
                 if (difficulty >= 1f && difficulty < 1.5f) return 4;
                 if (difficulty >= 1.5f) return 5;
                 return 3; // default
-            case Type.SPEEDY:
+            case Type.Speedy:
                 if (difficulty > 1f && difficulty < 1.5f) return 2;
-                return 1;
-            case Type.SPORADIC:
+                break;
+            case Type.Sporadic:
                 if (difficulty > 1.5f) return 2;
-                return 1;
+                break;
         }
+
         return 1;
     }
 
@@ -112,11 +112,13 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
         if (GameStateManager.Instance.IsPaused)
             return;
 
         // Random nudge
-        Vector3 randomNudge = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized * randomnessStrength * Time.deltaTime;
+        Vector3 randomNudge = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized *
+                              (randomnessStrength * Time.deltaTime);
 
         // Bias toward target with sin wave modulation
         Vector3 biasDir = targetPoint.position - transform.position;
@@ -125,9 +127,9 @@ public class EnemyController : MonoBehaviour
 
         float sinWave = Mathf.Sin(Time.time * 2f);
         float biasMultiplier = sinWave > -0.4f ? 1f : -0.5f;
-        Vector3 modulatedBias = biasDir * biasStrength * biasMultiplier;
+        Vector3 modulatedBias = biasDir * (biasStrength * biasMultiplier);
 
-        if (enemyType == Type.SPORADIC)
+        if (enemyType == Type.Sporadic)
         {
             targetDirection = (modulatedBias + currentDirection + randomNudge * 2f).normalized;
             currentDirection = Vector3.Lerp(currentDirection, targetDirection, Time.deltaTime * smoothing).normalized;
@@ -139,7 +141,7 @@ public class EnemyController : MonoBehaviour
         }
 
         // Move enemy
-        Vector3 newPos = transform.position + currentDirection * speed * Time.deltaTime;
+        Vector3 newPos = transform.position + currentDirection * (speed * Time.deltaTime);
         newPos.z = 0f;
         transform.position = newPos;
 
@@ -147,11 +149,12 @@ public class EnemyController : MonoBehaviour
         if (currentDirection != Vector3.zero)
         {
             float angle = Mathf.Atan2(currentDirection.y, currentDirection.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, 0f, angle - 90f), Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0f, 0f, angle - 90f),
+                Time.deltaTime * 5f);
         }
 
         // Rainbow for sporadic
-        if (enemyType == Type.SPORADIC)
+        if (enemyType == Type.Sporadic)
         {
             rainbowHue += Time.deltaTime * 0.5f;
             if (rainbowHue > 1f) rainbowHue -= 1f;
@@ -170,8 +173,9 @@ public class EnemyController : MonoBehaviour
         {
             if (hitPlanetSound != null)
             {
-                PlaySound2D(hitPlanetSound, 1f);
+                PlaySound2D(hitPlanetSound);
             }
+
             Destroy(gameObject);
         }
         else if (collision.gameObject.name.Contains("Bullet"))
@@ -184,13 +188,13 @@ public class EnemyController : MonoBehaviour
     {
         currentHealth -= amount;
 
-        if (enemyType == Type.SPORADIC && powerupSound != null)
+        if (enemyType == Type.Sporadic && powerupSound != null)
         {
-            PlaySound2D(powerupSound, 1f);
+            PlaySound2D(powerupSound);
         }
         else if (hitByBulletSound != null)
         {
-            PlaySound2D(hitByBulletSound, 1f);
+            PlaySound2D(hitByBulletSound);
         }
 
         if (currentHealth <= 0)
@@ -203,13 +207,13 @@ public class EnemyController : MonoBehaviour
     {
         if (clip == null) return;
 
-        GameObject tempGO = new GameObject("TempAudio");
-        tempGO.transform.position = Vector3.zero; // position irrelevant for 2D
-        AudioSource aSource = tempGO.AddComponent<AudioSource>();
+        GameObject tempGo = new GameObject("TempAudio");
+        tempGo.transform.position = Vector3.zero; // position irrelevant for 2D
+        AudioSource aSource = tempGo.AddComponent<AudioSource>();
         aSource.clip = clip;
         aSource.volume = volume;
         aSource.spatialBlend = 0f; // 0 = 2D sound
         aSource.Play();
-        Destroy(tempGO, clip.length);
+        Destroy(tempGo, clip.length);
     }
 }

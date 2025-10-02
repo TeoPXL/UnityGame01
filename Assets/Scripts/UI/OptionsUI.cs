@@ -1,36 +1,37 @@
 using System;
+using state;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OptionsUI : MonoBehaviour
+namespace UI
 {
-    public Button closeButton;
-
-    public Slider difficultySlider;
-
-    public event Action onCloseClicked;
-
-    private void Awake()
+    public class OptionsUI : MonoBehaviour
     {
-        if (closeButton != null)
-            closeButton.onClick.AddListener(() => onCloseClicked?.Invoke());
-    }
+        public Button closeButton;
 
-    private void Start()
-    {
-        if (difficultySlider != null)
+        public Slider difficultySlider;
+
+        public event Action OnCloseClicked;
+
+        private void Awake()
         {
-            // Initialize slider from current setting
-            difficultySlider.value = GameStateManager.Instance.settings.difficulty;
+            if (closeButton != null)
+                closeButton.onClick.AddListener(() => OnCloseClicked?.Invoke());
+        }
 
-            // Update settings when slider changes
-            difficultySlider.onValueChanged.AddListener(val =>
+        private void Start()
+        {
+            if (difficultySlider != null)
             {
-                GameStateManager.Instance.settings.difficulty = val;
-            });
+                // Initialize slider from current setting
+                difficultySlider.value = GameStateManager.Instance.settings.Difficulty;
+
+                // Update settings when slider changes
+                difficultySlider.onValueChanged.AddListener(val =>
+                {
+                    GameStateManager.Instance.settings.Difficulty = val;
+                });
+            }
         }
     }
-
-    public void Show() => gameObject.SetActive(true);
-    public void Hide() => gameObject.SetActive(false);
 }

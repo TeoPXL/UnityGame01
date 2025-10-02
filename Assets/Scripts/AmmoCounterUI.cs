@@ -7,7 +7,7 @@ public class AmmoCounterUI : MonoBehaviour
     private Transform ammoContainer;
 
     // Keep a list of all bullet icons
-    private List<GameObject> bulletIcons = new List<GameObject>();
+    private List<GameObject> bulletIcons = new();
 
     void Awake()
     {

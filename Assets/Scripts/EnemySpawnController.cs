@@ -1,14 +1,13 @@
+using state;
 using UnityEngine;
 
 public class EnemySpawnController : MonoBehaviour
 {
-    [Header("Spawn Settings")]
-    public GameObject enemyPrefab;       // The enemy prefab to spawn
-    public Transform biasPoint;          // The point enemies will be biased toward
-    public float spawnInterval = 2f;     // Time between spawns
-    public Vector3 spawnAreaSize = new Vector3(10, 0, 10); // Size of spawn area
-    [Header("Kill Zone Settings")]
-    public Vector3 killZoneSize = new Vector3(20, 20, 0); // size of the bounding box
+    [Header("Spawn Settings")] public GameObject enemyPrefab; // The enemy prefab to spawn
+    public Transform biasPoint; // The point enemies will be biased toward
+    public float spawnInterval = 2f; // Time between spawns
+    public Vector3 spawnAreaSize = new(10, 0, 10); // Size of spawn area
+    [Header("Kill Zone Settings")] public Vector3 killZoneSize = new(20, 20, 0); // size of the bounding box
 
 
     private float spawnTimer;
@@ -20,9 +19,11 @@ public class EnemySpawnController : MonoBehaviour
 
     void Update()
     {
-        if (!GameStateManager.Instance.IsPlaying){
+        if (!GameStateManager.Instance.IsPlaying)
+        {
             return;
         }
+
         spawnTimer -= Time.deltaTime;
         if (spawnTimer <= 0f)
         {
@@ -46,29 +47,13 @@ public class EnemySpawnController : MonoBehaviour
 
         // Set the bias point, random type, and kill zone reference
         EnemyController enemyController = enemyInstance.GetComponent<EnemyController>();
-        if (enemyController != null)
+        if (enemyController)
         {
             enemyController.targetPoint = biasPoint;
 
             // Assign a random enemy type
             EnemyController.Type[] types = (EnemyController.Type[])System.Enum.GetValues(typeof(EnemyController.Type));
             enemyController.enemyType = types[Random.Range(0, types.Length)];
-
-            EnemyController.Type chosenType;
-
-            int roll = Random.Range(0, 100); // 0–99
-            if (roll < 45)
-            {
-                chosenType = types[0]; // 45% chance
-            }
-            else if (roll < 90)
-            {
-                chosenType = types[1]; // 45% chance
-            }
-            else
-            {
-                chosenType = types[2]; // 10% chance
-            }
 
             // Assign the spawn controller so the enemy can check the kill zone
             enemyController.spawnController = this;
@@ -81,7 +66,7 @@ public class EnemySpawnController : MonoBehaviour
         Vector3 min = transform.position - killZoneSize / 2f;
         Vector3 max = transform.position + killZoneSize / 2f;
         return position.x >= min.x && position.x <= max.x &&
-            position.y >= min.y && position.y <= max.y;
+               position.y >= min.y && position.y <= max.y;
     }
 
 

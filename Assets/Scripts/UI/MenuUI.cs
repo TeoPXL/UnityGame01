@@ -2,25 +2,25 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuUI : MonoBehaviour
+namespace UI
 {
-    // Assign these in the Inspector (buttons inside your Menu prefab)
-    public Button startButton;
-    public Button optionsButton;
-    public Button quitButton;
-
-    // Events the state code subscribes to
-    public event Action onStartClicked;
-    public event Action onOptionsClicked;
-    public event Action onQuitClicked;
-
-    private void Awake()
+    public class MenuUI : MonoBehaviour
     {
-        if (startButton != null) startButton.onClick.AddListener(() => onStartClicked?.Invoke());
-        if (optionsButton != null) optionsButton.onClick.AddListener(() => onOptionsClicked?.Invoke());
-        if (quitButton != null) quitButton.onClick.AddListener(() => onQuitClicked?.Invoke());
-    }
+        // Assign these in the Inspector (buttons inside your Menu prefab)
+        public Button startButton;
+        public Button optionsButton;
+        public Button quitButton;
 
-    public void Show() => gameObject.SetActive(true);
-    public void Hide() => gameObject.SetActive(false);
+        // Events the state code subscribes to
+        public event Action OnStartClicked;
+        public event Action OnOptionsClicked;
+        public event Action OnQuitClicked;
+
+        private void Awake()
+        {
+            if (startButton != null) startButton.onClick.AddListener(() => OnStartClicked?.Invoke());
+            if (optionsButton != null) optionsButton.onClick.AddListener(() => OnOptionsClicked?.Invoke());
+            if (quitButton != null) quitButton.onClick.AddListener(() => OnQuitClicked?.Invoke());
+        }
+    }
 }

@@ -1,3 +1,4 @@
+using state;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,7 +15,7 @@ public class NozzleController : MonoBehaviour
     [Header("Spread + Autofire")]
     public float spreadAngle = 5f;
     public float fireRate = 0.1f;
-    private float nextFireTime = 0f;
+    private float nextFireTime;
 
     [Header("Audio Settings")]
     public AudioClip shootSound;
