@@ -203,6 +203,11 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        GameStateManager.Instance.Score++;
+    }
+
     void PlaySound2D(AudioClip clip, float volume = 1f)
     {
         if (clip == null) return;

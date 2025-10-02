@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace state
 {
@@ -26,6 +27,18 @@ namespace state
         public OptionsUI optionsUIPrefab;
         public PlayingUI playingUIPrefab;
         public ScoreUI scoreUIPrefab;
+        private int score;
+        public int Score
+        {
+            get => score;
+            set
+            {
+                score = value; 
+                OnScoreChanged?.Invoke(score);
+            }
+            
+        }
+        public event UnityAction<int> OnScoreChanged;
 
         [Header("Optional")] public Transform uiRoot; // parent instantiated UI under this (optional)
 
